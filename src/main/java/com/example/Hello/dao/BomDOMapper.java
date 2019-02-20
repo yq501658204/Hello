@@ -9,6 +9,11 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.example.Hello.entity.BomDO;
 
+/**
+ * bomdoDao层
+ * @author YQ13512
+ *
+ */
 @Mapper
 public interface BomDOMapper {
 	

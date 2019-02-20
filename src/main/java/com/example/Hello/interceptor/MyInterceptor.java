@@ -15,6 +15,11 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 
 import com.example.Hello.util.SessionUtil;
 
+/**
+ * mycat拦截器，用于注释sql，查询或更改当前用户信息
+ * @author YQ13512
+ *
+ */
 @Intercepts(
         @Signature(type = StatementHandler.class,
                 method = "prepare",

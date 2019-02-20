@@ -24,6 +24,11 @@ import com.example.Hello.entity.RolePermission;
 import com.example.Hello.entity.User;
 import com.example.Hello.entity.UserRole;
 
+/**
+ * 自定义realm
+ * @author YQ13512
+ *
+ */
 public class MyRealm extends AuthorizingRealm{
 
 	@Autowired

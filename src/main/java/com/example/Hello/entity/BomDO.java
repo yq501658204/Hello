@@ -2,6 +2,11 @@ package com.example.Hello.entity;
 
 import java.io.Serializable;
 
+/**
+ * bomDo实体类
+ * @author YQ13512
+ *
+ */
 public class BomDO implements Serializable{
 	
 	private static final long serialVersionUID = 1L;

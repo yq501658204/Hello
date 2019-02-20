@@ -6,6 +6,11 @@ import java.security.NoSuchAlgorithmException;
 import org.apache.shiro.crypto.hash.Md5Hash;
 
 
+/**
+ * MD5工具类，用于对密码进行Md5
+ * @author YQ13512
+ *
+ */
 public class MD5 {
 
 	public static String md5(String str) {

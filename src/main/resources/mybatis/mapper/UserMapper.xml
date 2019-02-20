@@ -38,6 +38,24 @@
 	   		</if>
 	    </where>
     </select>
+    
+    <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+    	SELECT
+    		count(user_id)
+    	FROM
+    		user
+    	<where>
+    		<if test="name != null and name != ''">
+    			name = #{name}
+    		</if>
+    		<if test="salt != null and salt != ''">
+    			and salt = #{salt}
+    		</if>
+    		<if test="state != null and state != ''">
+    			and state = #{state}
+    		</if>
+    	</where>
+    </select>
 
     <insert id="save" parameterType="com.example.Hello.entity.User" >
        INSERT INTO 

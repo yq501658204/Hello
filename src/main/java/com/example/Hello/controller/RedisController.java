@@ -6,6 +6,11 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * redis测试
+ * @author YQ13512
+ *
+ */
 @RestController
 public class RedisController {
 

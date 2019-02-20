@@ -18,6 +18,11 @@ import com.example.Hello.dao.BomDOMapper;
 import com.example.Hello.entity.BomDO;
 import com.example.Hello.util.SessionUtil;
 
+/**
+ * 测试
+ * @author YQ13512
+ *
+ */
 @Controller
 public class HelloWorld {
 	
