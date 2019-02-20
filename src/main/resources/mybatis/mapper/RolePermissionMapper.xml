@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.Hello.dao.RolePermissionMapper">
+	
+	<resultMap id="BaseResultMap" type="com.example.Hello.entity.RolePermission" >
+        <id column="rp_id" property="rp_id" jdbcType="BIGINT" />
+        <result column="role_id" property="role_id" jdbcType="BIGINT" />
+        <result column="permission_id" property="permission_id" jdbcType="BIGINT" />
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        rp_id, role_id, permission_id 
+    </sql>
+
+    <select id="getAll" parameterType="java.util.Map" resultMap="BaseResultMap"  >
+       	SELECT 
+       	<include refid="Base_Column_List" />
+	   	FROM role_permission
+	   	<where>
+	   		<if test="rp_id != null and rp_id != ''">
+	   			rp_id = #{rp_id}
+	   		</if>
+	   		<if test="role_id != null and role_id != ''">
+	   			and role_id = #{role_id}
+	   		</if>
+	   		<if test="permission_id != null and permission_id != ''">
+	   			and permission_id = #{permission_id}
+	   		</if>
+	   	</where>
+    </select>
+
+    <select id="getOne" parameterType="java.lang.Long" resultMap="BaseResultMap" >
+        SELECT 
+       <include refid="Base_Column_List" />
+	   FROM role_permission
+	   WHERE rp_id = #{rp_id}
+    </select>
+
+    <insert id="save" parameterType="com.example.Hello.entity.RolePermission" >
+       INSERT INTO 
+       		role_permission
+       		(role_id,permission_id) 
+       	VALUES
+       		(#{role_id}, #{permission_id})
+    </insert>
+    
+    <update id="update" parameterType="com.example.Hello.entity.RolePermission" >
+       UPDATE 
+       		role_permission 
+       SET 
+       	<if test="role_id != null">role_id = #{role_id},</if>
+       	<if test="permission_id != null">permission_id = #{permission_id}</if>
+       WHERE 
+       		rp_id = #{rp_id}
+    </update>
+    
+    <delete id="delete" parameterType="java.lang.Long" >
+       DELETE FROM
+       		 role_permission 
+       WHERE 
+       		 rp_id =#{rp_id}
+    </delete>
+
+</mapper>

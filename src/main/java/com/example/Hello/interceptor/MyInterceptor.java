@@ -11,7 +11,7 @@ import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
-import org.springframework.stereotype.Component;
+/*import org.springframework.stereotype.Component;*/
 
 import com.example.Hello.util.SessionUtil;
 
@@ -19,7 +19,7 @@ import com.example.Hello.util.SessionUtil;
         @Signature(type = StatementHandler.class,
                 method = "prepare",
                 args = {Connection.class,Integer.class}))
-@Component
+/*@Component*/
 public class MyInterceptor implements Interceptor{
 	private static final String preState="/*!mycat:datanode=";
     private static final String afterState="*/";

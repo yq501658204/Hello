@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.Hello.dao.RoleMapper">
+	
+	<resultMap id="BaseResultMap" type="com.example.Hello.entity.Role" >
+        <id column="role_id" property="role_id" jdbcType="BIGINT" />
+        <result column="server_name" property="server_name" jdbcType="VARCHAR" />
+        <result column="client_name" property="client_name" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        role_id, server_name, client_name 
+    </sql>
+
+    <select id="getAll" resultMap="BaseResultMap"  >
+       SELECT 
+       <include refid="Base_Column_List" />
+	   FROM role
+    </select>
+
+	<select id="getRole" parameterType="java.lang.Long" resultType="java.lang.String">
+		SELECT
+			server_name
+		FROM
+			role
+		WHERE
+			role_id = #{role_id}
+	</select>
+
+    <select id="getOne" parameterType="java.lang.Long" resultMap="BaseResultMap" >
+        SELECT 
+       <include refid="Base_Column_List" />
+	   FROM role
+	   WHERE role_id = #{role_id}
+    </select>
+
+    <insert id="save" parameterType="com.example.Hello.entity.Role" >
+       INSERT INTO 
+       		role
+       		(server_name,client_name) 
+       	VALUES
+       		(#{server_name}, #{client_name})
+    </insert>
+    
+    <update id="update" parameterType="com.example.Hello.entity.Role" >
+       UPDATE 
+       		role 
+       SET 
+       	<if test="server_name != null">server_name = #{server_name},</if>
+       	<if test="client_name != null">client_name = #{client_name},</if>
+       WHERE 
+       		role_id = #{role_id}
+    </update>
+    
+    <delete id="delete" parameterType="java.lang.Long" >
+       DELETE FROM
+       		 role 
+       WHERE 
+       		 role_id =#{role_id}
+    </delete>
+
+</mapper>
