@@ -1,7 +1,7 @@
 package com.example.Hello.entity;
 
 /**
- * 用户表
+ * 用户实体类
  * @author YQ13512
  *
  */
@@ -16,12 +16,6 @@ public class User {
 	//用户状态,0:创建未认证（比如没有激活，没有输入验证码等等）--等待验证的用户 , 1:正常状态,2：用户被锁定.
 	private byte state;
 	
-	@Override
-	public String toString() {
-		return "User [user_id=" + user_id + ", username=" + username
-				+ ", password=" + password + ", name=" + name + ", salt="
-				+ salt + ", state=" + state + "]";
-	}
 	public Long getUser_id() {
 		return user_id;
 	}

@@ -48,7 +48,7 @@ public class MyRealm extends AuthorizingRealm{
 		String username = (String) collection.getPrimaryPrincipal();
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put("username", username);
-		User user = userMapper.getOne(map);
+		User user = userMapper.fingById(map);
 		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
 		map.put("user_id", user.getUser_id());
 		List<UserRole> roleList = userRoleMapper.getAll(map);
@@ -78,7 +78,7 @@ public class MyRealm extends AuthorizingRealm{
 	    //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
 	    Map<String, Object> map=new HashMap<String, Object>();
 	    map.put("username", username);
-	    User user = userMapper.getOne(map);
+	    User user = userMapper.fingById(map);
 	    System.out.println("----->>userInfo="+user);
 	    if(user == null){
 	        return null;

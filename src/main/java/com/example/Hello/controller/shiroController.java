@@ -1,6 +1,6 @@
 package com.example.Hello.controller;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +42,8 @@ public class shiroController {
 		for (User user : userList) {
 			System.out.println(user.getUsername());
 		}*/
-		PageBean<User> pageBean = userService.getByPage(1, 2);
+		Map<String, Object> map=new HashMap<String, Object>();
+		PageBean<User> pageBean = userService.datalistPage(map, 1, 2);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("pageBean", pageBean);
 		return jsonObject;
@@ -50,7 +51,7 @@ public class shiroController {
 	
 	@RequestMapping("/toLogin")
 	public String toLogin(){
-		return "login";
+		return "helloworld";
 	}
 	
 	@RequestMapping("/logout")
@@ -103,7 +104,7 @@ public class shiroController {
 		User user = new User();
 		user.setUser_id(1L);
 		user.setUsername("zhangsan");
-		userMapper.update(user);
+		userMapper.edit(user);
 		return "可以哦";
 	}
 	

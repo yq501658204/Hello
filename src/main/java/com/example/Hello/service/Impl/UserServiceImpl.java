@@ -1,6 +1,5 @@
 package com.example.Hello.service.Impl;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,51 +23,74 @@ public class UserServiceImpl implements UserService{
 	@Autowired
 	private UserMapper userMapper;
 	
-	@Override
-	public List<User> getAll() {
-		List<User> userList = userMapper.getAll();
-		return userList;
-	}
-	
-	@Override
-	public PageBean<User> getByPage(Integer currentPage,Integer pageSize) {
-		PageHelper.startPage(currentPage, pageSize);
-		List<User> userList = userMapper.getAll();
-		for (User user : userList) {
-			System.out.println(user);
-		}
-		System.out.println("我就看看我的user"+userList);
-		PageBean<User> pageBean = new PageBean<User>(userList);
-		Map<String, Object> map=new HashMap<String, Object>();
-		Integer count = userMapper.count(map);
-		PageBean<User> pageBean2 = new PageBean<User>(currentPage, pageSize, count);
-		pageBean2.setItems(userList);
-		System.out.println("111111111:"+pageBean);
-		System.out.println("222222222:"+pageBean2);
-		System.out.println(pageBean2.getItems());
-		return pageBean2;
-	}
-
-	@Override
-	public User getOne(Map<String, Object> map) {
-		User user = userMapper.getOne(map);
-		return user;
-	}
-
+	/**
+	 * 新增
+	 */
 	@Override
 	public void save(User user) {
 		userMapper.save(user);
 	}
-
-	@Override
-	public void update(User user) {
-		userMapper.update(user);
-	}
-
+	
+	/**
+	 * 删除
+	 */
 	@Override
 	public void delete(Long user_id) {
 		userMapper.delete(user_id);
 	}
 
+	/**
+	 * 修改
+	 */
+	@Override
+	public void edit(User user) {
+		userMapper.edit(user);
+	}
+
+	/**
+	 * 通过id获取数据
+	 */
+	@Override
+	public User fingById(Map<String, Object> map) {
+		return userMapper.fingById(map);
+	}
+
+	/**
+	 * 列表
+	 */
+	@Override
+	public PageBean<User> datalistPage(Map<String, Object> map,Integer currentPage,Integer pageSize) {
+		PageHelper.startPage(currentPage, pageSize);
+		List<User> userList = userMapper.datalistPage(map);
+		Integer count = userMapper.count(map);
+		PageBean<User> pageBean=new PageBean<User>();
+		pageBean.setItems(userList);
+		pageBean.setTotalNum(count);
+		return pageBean;
+	}
+
+	/**
+	 * 列表(全部)
+	 */
+	@Override
+	public List<User> listAll(Map<String, Object> map) {
+		return userMapper.listAll(map);
+	}
+
+	/**
+	 * 统计
+	 */
+	@Override
+	public Integer count(Map<String, Object> map) {
+		return userMapper.count(map);
+	}
+
+	/**
+	 * 批量删除
+	 */
+	@Override
+	public void deleteAll(String[] item) {
+		userMapper.deleteAll(item);
+	}
 
 }

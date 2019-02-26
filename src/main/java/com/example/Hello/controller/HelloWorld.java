@@ -1,81 +1,1006 @@
 package com.example.Hello.controller;
 
-
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.Hello.dao.BomDOMapper;
-import com.example.Hello.entity.BomDO;
-import com.example.Hello.util.SessionUtil;
-
-/**
- * 测试
- * @author YQ13512
- *
- */
-@Controller
 public class HelloWorld {
 	
-	@Autowired
-    private BomDOMapper bomDOMapper;
 	
-	@RequestMapping("/hehe")
-	public String HelloW(){
-		return "hehe";
+	public static void main(String[] args) throws IOException {
+		
+		String controllerPath="F:/YQ/Project/Hello/src/main/java/com/example/Hello/controller";
+		String servicePath="F:/YQ/Project/Hello/src/main/java/com/example/Hello/service";
+		String entityPath="F:/YQ/Project/Hello/src/main/java/com/example/Hello/entity";
+		String daoPath="F:/YQ/Project/Hello/src/main/java/com/example/Hello/dao";
+		String xmlPath="F:/YQ/Project/Hello/src/main/resources/mybatis/mapper";
+		String objectName="Student";
+		String name="学生";
+		String mysqlName="hello_student";
+		Map<String, Object> column=new HashMap<String, Object>();
+		column.put("name", "String");
+		column.put("age", "Integer");
+		String lowerCase = objectName.toLowerCase();
+		generatorDirectory(controllerPath,lowerCase);
+		newEntity(entityPath, objectName, name, column, lowerCase);
+		newXml(xmlPath, objectName, lowerCase, column, mysqlName);
+		newDao(daoPath, objectName, mysqlName, lowerCase);
+		newService(servicePath, objectName, mysqlName, lowerCase);
+		newServiceImpl(servicePath, objectName, mysqlName, lowerCase);
+		newController(controllerPath, objectName, mysqlName, lowerCase);
+		System.out.println("OJBK");
 	}
 	
-    //简化，直接通过这里设置session
-    @GetMapping("/set/{sess}")
-    @ResponseBody
-    public Object setSession(@PathVariable("sess") String sess){
-        HttpSession httpSession= SessionUtil.getSession();
-        httpSession.setAttribute("corp",sess);
-        return "ok";
-    }
-    
-    @GetMapping("/add")
-    @ResponseBody
-    public String add(){
-    	BomDO bomDO = new BomDO();
-    	bomDO.setCateCode("dsd");
-    	bomDO.setParentId(123L);
-    	bomDO.setName("zhangsan");
-    	bomDO.setUnit("lisi");
-    	bomDO.setUsedCount(456D);
-    	bomDO.setSpecify("wangwu");
-    	bomDO.setProperty(12);
-    	bomDO.setStatus(23);
-    	bomDO.setDescription("desr");
-    	bomDOMapper.save(bomDO);
-    	return "OJBK";
-    }
-
-    @ResponseBody
-    @GetMapping("/list")
-    public List<BomDO> list(){
-        Map<String, Object> query = new HashMap<>(16);
-        List<BomDO> bomList = bomDOMapper.list(query);
-        for (BomDO bomDO : bomList) {
-			System.out.println(bomDO);
+	//生成Controller
+	private static void newController(String controllerPath,String objectName,String name,String lowerCase) throws IOException{
+		File file = new File(controllerPath+"/"+lowerCase+"/"+objectName+"Controller.java");
+		if(file.exists())return;
+		//不存在就创建并且写入内容
+		file.createNewFile();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+		bw.write("package com.example.Hello.controller."+lowerCase+";");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import java.util.Map;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import org.apache.shiro.SecurityUtils;");
+		bw.newLine();
+		bw.write("import org.apache.shiro.subject.Subject;");
+		bw.newLine();
+		bw.write("import org.springframework.beans.factory.annotation.Autowired;");
+		bw.newLine();
+		bw.write("import org.springframework.stereotype.Controller;");
+		bw.newLine();
+		bw.write("import org.springframework.web.bind.annotation.RequestMapping;");
+		bw.newLine();
+		bw.write("import org.springframework.web.servlet.ModelAndView;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import com.example.Hello.controller.base.BaseController;");
+		bw.newLine();
+		bw.write("import com.example.Hello.entity."+objectName+";");
+		bw.newLine();
+		bw.write("import com.example.Hello.service."+objectName+"Service;");
+		bw.newLine();
+		bw.write("import com.example.Hello.util.PageBean;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("/**");
+		bw.newLine();
+		bw.write(" * "+name+"控制层");
+		bw.newLine();
+		bw.write(" * @author YQ13512");
+		bw.newLine();
+		bw.write(" *");
+		bw.newLine();
+		bw.write(" */");
+		bw.newLine();
+		bw.write("@Controller");
+		bw.newLine();
+		bw.write("public class "+objectName+"Controller extends BaseController{");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	@Autowired");
+		bw.newLine();
+		bw.write("	private "+objectName+"Service "+lowerCase+"Service;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 列表");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@RequestMapping(\"/list\")");
+		bw.newLine();
+		bw.write("	public ModelAndView list(Integer currentPage,Integer pageSize){");
+		bw.newLine();
+		bw.write("		ModelAndView mv = this.getModelAndView();");
+		bw.newLine();
+		bw.write("		Subject subject = SecurityUtils.getSubject();//进行权限校验");
+		bw.newLine();
+		bw.write("		boolean permitted = subject.isPermitted(\""+lowerCase+"/list\");");
+		bw.newLine();
+		bw.write("		if(permitted){");
+		bw.newLine();
+		bw.write("			Map<String, Object> map = this.getMap();");
+		bw.newLine();
+		bw.write("			PageBean<"+objectName+"> pageBean = "+lowerCase+"Service.datalistPage(map, currentPage, pageSize);");
+		bw.newLine();
+		bw.write("			mv.addObject(\""+lowerCase+"List\", pageBean.getItems());");
+		bw.newLine();
+		bw.write("			mv.setViewName(\""+lowerCase+"/list\");");
+		bw.newLine();
+		bw.write("			return mv;");
+		bw.newLine();
+		bw.write("		}else{");
+		bw.newLine();
+		bw.write("			mv.setViewName(\"404\");");
+		bw.newLine();
+		bw.write("			return mv;");
+		bw.newLine();
+		bw.write("		}");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 增加");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@RequestMapping(\"/save\")");
+		bw.newLine();
+		bw.write("	public ModelAndView save("+objectName+" "+lowerCase+"){");
+		bw.newLine();
+		bw.write("		ModelAndView mv = this.getModelAndView();");
+		bw.newLine();
+		bw.write("		Subject subject = SecurityUtils.getSubject();//进行权限校验");
+		bw.newLine();
+		bw.write("		boolean permitted = subject.isPermitted(\""+lowerCase+"/add\");");
+		bw.newLine();
+		bw.write("		if(permitted){");
+		bw.newLine();
+		bw.write("			"+lowerCase+"Service.save("+lowerCase+");");
+		bw.newLine();
+		bw.write("			mv.setViewName(\"redirect:"+lowerCase+"/list\");");
+		bw.newLine();
+		bw.write("			return mv;");
+		bw.newLine();
+		bw.write("		}else{");
+		bw.newLine();
+		bw.write("			mv.setViewName(\"404\");");
+		bw.newLine();
+		bw.write("			return mv;");
+		bw.newLine();
+		bw.write("		}");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 修改");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@RequestMapping(\"/edit\")");
+		bw.newLine();
+		bw.write("	public ModelAndView edit("+objectName+" "+lowerCase+"){");
+		bw.newLine();
+		bw.write("		ModelAndView mv = this.getModelAndView();");
+		bw.newLine();
+		bw.write("		Subject subject = SecurityUtils.getSubject();//进行权限校验");
+		bw.newLine();
+		bw.write("		boolean permitted = subject.isPermitted(\""+lowerCase+"/update\");");
+		bw.newLine();
+		bw.write("		if(permitted){");
+		bw.newLine();
+		bw.write("			"+lowerCase+"Service.edit("+lowerCase+");");
+		bw.newLine();
+		bw.write("			mv.setViewName(\"redirect:"+lowerCase+"/list\");");
+		bw.newLine();
+		bw.write("			return mv;");
+		bw.newLine();
+		bw.write("		}else{");
+		bw.newLine();
+		bw.write("			mv.setViewName(\"404\");");
+		bw.newLine();
+		bw.write("			return mv;");
+		bw.newLine();
+		bw.write("		}");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 去新增页面");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@RequestMapping(\"/goAdd\")");
+		bw.newLine();
+		bw.write("	public ModelAndView goAdd(){");
+		bw.newLine();
+		bw.write("		ModelAndView mv = this.getModelAndView();");
+		bw.newLine();
+		bw.write("		mv.setViewName(\""+lowerCase+"/"+lowerCase+"_edit\");");
+		bw.newLine();
+		bw.write("		return mv;");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 去修改页面");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@RequestMapping(\"/goEdit\")");
+		bw.newLine();
+		bw.write("	public ModelAndView goEdit(Long "+lowerCase+"_id){");
+		bw.newLine();
+		bw.write("		ModelAndView mv = this.getModelAndView();");
+		bw.newLine();
+		bw.write("		Map<String, Object> map = this.getMap();");
+		bw.newLine();
+		bw.write("		map.put(\""+lowerCase+"_id\", "+lowerCase+"_id);");
+		bw.newLine();
+		bw.write("		"+objectName+" "+lowerCase+" = "+lowerCase+"Service.fingById(map);");
+		bw.newLine();
+		bw.write("		mv.addObject(\""+lowerCase+"\", "+lowerCase+");");
+		bw.newLine();
+		bw.write("		mv.setViewName(\""+lowerCase+"/"+lowerCase+"_edit\");");
+		bw.newLine();
+		bw.write("		return mv;");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 删除");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@RequestMapping(\"/delete\")");
+		bw.newLine();
+		bw.write("	public ModelAndView delete(Long "+lowerCase+"_id){");
+		bw.newLine();
+		bw.write("		ModelAndView mv = this.getModelAndView();");
+		bw.newLine();
+		bw.write("		Subject subject = SecurityUtils.getSubject();//进行权限校验");
+		bw.newLine();
+		bw.write("		boolean permitted = subject.isPermitted(\""+lowerCase+"/delete\");");
+		bw.newLine();
+		bw.write("		if(permitted){");
+		bw.newLine();
+		bw.write("			"+lowerCase+"Service.delete("+lowerCase+"_id);");
+		bw.newLine();
+		bw.write("			mv.setViewName(\"redirect:"+lowerCase+"/list\");");
+		bw.newLine();
+		bw.write("			return mv;");
+		bw.newLine();
+		bw.write("		}else{");
+		bw.newLine();
+		bw.write("			mv.setViewName(\"404\");");
+		bw.newLine();
+		bw.write("			return mv;");
+		bw.newLine();
+		bw.write("		}");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 批量删除");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@RequestMapping(\"deleteAll\")");
+		bw.newLine();
+		bw.write("	public ModelAndView deletaAll(String[] item){");
+		bw.newLine();
+		bw.write("		ModelAndView mv = this.getModelAndView();");
+		bw.newLine();
+		bw.write("		Subject subject = SecurityUtils.getSubject();//进行权限校验");
+		bw.newLine();
+		bw.write("		boolean permitted = subject.isPermitted(\""+lowerCase+"/deleteAll\");");
+		bw.newLine();
+		bw.write("		if(permitted){");
+		bw.newLine();
+		bw.write("			"+lowerCase+"Service.deleteAll(item);");
+		bw.newLine();
+		bw.write("			mv.setViewName(\"redirect:"+lowerCase+"/list\");");
+		bw.newLine();
+		bw.write("			return mv;");
+		bw.newLine();
+		bw.write("		}else{");
+		bw.newLine();
+		bw.write("			mv.setViewName(\"404\");");
+		bw.newLine();
+		bw.write("			return mv;");
+		bw.newLine();
+		bw.write("		}");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("}");
+		bw.flush();
+		bw.close();
+	}
+	
+	//生成Service实现类
+	private static void newServiceImpl(String servicePath,String objectName,String name,String lowerCase) throws IOException{
+		File file = new File(servicePath+"/Impl/"+objectName+"ServiceImpl.java");
+		if(file.exists())return;
+		//不存在就创建并且写入内容
+		file.createNewFile();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+		bw.write("package com.example.Hello.service.Impl;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import java.util.List;");
+		bw.newLine();
+		bw.write("import java.util.Map;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import org.springframework.beans.factory.annotation.Autowired;");
+		bw.newLine();
+		bw.write("import org.springframework.stereotype.Service;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import com.example.Hello.dao."+objectName+"Mapper;");
+		bw.newLine();
+		bw.write("import com.example.Hello.entity."+objectName+";");
+		bw.newLine();
+		bw.write("import com.example.Hello.service."+objectName+"Service;");
+		bw.newLine();
+		bw.write("import com.example.Hello.util.PageBean;");
+		bw.newLine();
+		bw.write("import com.github.pagehelper.PageHelper;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("/**");
+		bw.newLine();
+		bw.write(" * "+name+"Service实现类");
+		bw.newLine();
+		bw.write(" * @author YQ13512");
+		bw.newLine();
+		bw.write(" *");
+		bw.newLine();
+		bw.write(" */");
+		bw.newLine();
+		bw.write("@Service");
+		bw.newLine();
+		bw.write("public class "+objectName+"ServiceImpl implements "+objectName+"Service{");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	@Autowired");
+		bw.newLine();
+		bw.write("	private "+objectName+"Mapper "+lowerCase+"Mapper;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 新增");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@Override");
+		bw.newLine();
+		bw.write("	public void save("+objectName+" "+lowerCase+") {");
+		bw.newLine();
+		bw.write("		"+lowerCase+"Mapper.save("+lowerCase+");");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 删除");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@Override");
+		bw.newLine();
+		bw.write("	public void delete(Long "+lowerCase+"_id) {");
+		bw.newLine();
+		bw.write("		"+lowerCase+"Mapper.delete("+lowerCase+"_id);");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 修改");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@Override");
+		bw.newLine();
+		bw.write("	public void edit("+objectName+" "+lowerCase+") {");
+		bw.newLine();
+		bw.write("		"+lowerCase+"Mapper.edit("+lowerCase+");");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 通过id获取数据");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@Override");
+		bw.newLine();
+		bw.write("	public "+objectName+" fingById(Map<String, Object> map) {");
+		bw.newLine();
+		bw.write("		return "+lowerCase+"Mapper.fingById(map);");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 列表");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@Override");
+		bw.newLine();
+		bw.write("	public PageBean<"+objectName+"> datalistPage(Map<String, Object> map,Integer currentPage,Integer pageSize) {");
+		bw.newLine();
+		bw.write("		PageHelper.startPage(currentPage, pageSize);");
+		bw.newLine();
+		bw.write("		List<"+objectName+"> "+lowerCase+"List = "+lowerCase+"Mapper.datalistPage(map);");
+		bw.newLine();
+		bw.write("		Integer count = "+lowerCase+"Mapper.count(map);");
+		bw.newLine();
+		bw.write("		PageBean<"+objectName+"> pageBean=new PageBean<"+objectName+">();");
+		bw.newLine();
+		bw.write("		pageBean.setItems("+lowerCase+"List);");
+		bw.newLine();
+		bw.write("		pageBean.setTotalNum(count);");
+		bw.newLine();
+		bw.write("		return pageBean;");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 列表(全部)");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@Override");
+		bw.newLine();
+		bw.write("	public List<"+objectName+"> listAll(Map<String, Object> map) {");
+		bw.newLine();
+		bw.write("		return "+lowerCase+"Mapper.listAll(map);");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 统计");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@Override");
+		bw.newLine();
+		bw.write("	public Integer count(Map<String, Object> map) {");
+		bw.newLine();
+		bw.write("		return "+lowerCase+"Mapper.count(map);");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	/**");
+		bw.newLine();
+		bw.write("	 * 批量删除");
+		bw.newLine();
+		bw.write("	 */");
+		bw.newLine();
+		bw.write("	@Override");
+		bw.newLine();
+		bw.write("	public void deleteAll(String[] item) {");
+		bw.newLine();
+		bw.write("		"+lowerCase+"Mapper.deleteAll(item);");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.newLine();
+		bw.write("}");
+		bw.flush();
+		bw.close();
+	}
+	
+	//生成Service接口
+	private static void newService(String servicePath,String objectName,String name,String lowerCase) throws IOException{
+		File file = new File(servicePath+"/"+objectName+"Service.java");
+		if(file.exists())return;
+		//不存在就创建并且写入内容
+		file.createNewFile();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+		bw.write("package com.example.Hello.service;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import java.util.List;");
+		bw.newLine();
+		bw.write("import java.util.Map;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import com.example.Hello.entity."+objectName+";");
+		bw.newLine();
+		bw.write("import com.example.Hello.util.PageBean;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("/**");
+		bw.newLine();
+		bw.write(" * "+name+"Service接口");
+		bw.newLine();
+		bw.write(" * @author YQ13512");
+		bw.newLine();
+		bw.write(" *");
+		bw.newLine();
+		bw.write(" */");
+		bw.newLine();
+		bw.write("public interface "+objectName+"Service {");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	void save("+objectName+" "+lowerCase+");");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	void delete(Long "+lowerCase+"_id);");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	void edit("+objectName+" "+lowerCase+");");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	"+objectName+" fingById(Map<String, Object> map);");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	PageBean<"+objectName+"> datalistPage(Map<String, Object> map,Integer currentPage,Integer pageSize);");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	List<"+objectName+"> listAll(Map<String, Object> map);");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	Integer count(Map<String, Object> map);");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	void deleteAll(String[] item);");
+		bw.newLine();
+		bw.newLine();
+		bw.write("}");
+		bw.flush();
+		bw.close();
+	}
+	//生成Dao层
+	private static void newDao(String daoPath,String objectName,String name,String lowerCase) throws IOException{
+		File file = new File(daoPath+"/"+objectName+"Mapper.java");
+		if(file.exists())return;
+		//不存在就创建并且写入内容
+		file.createNewFile();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+		bw.write("package com.example.Hello.dao;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import java.util.List;");
+		bw.newLine();
+		bw.write("import java.util.Map;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import org.apache.ibatis.annotations.Mapper;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import com.example.Hello.entity."+objectName+";");
+		bw.newLine();
+		bw.newLine();
+		bw.write("/**");
+		bw.newLine();
+		bw.write(" * "+name+"Dao层");
+		bw.newLine();
+		bw.write(" * @author YQ13512");
+		bw.newLine();
+		bw.write(" *");
+		bw.newLine();
+		bw.write(" */");
+		bw.newLine();
+		bw.write("@Mapper");
+		bw.newLine();
+		bw.write("public interface "+objectName+"Mapper {");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	void save("+objectName+" "+lowerCase+");");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	void delete(Long "+lowerCase+"_id);");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	void edit("+objectName+" "+lowerCase+");");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	"+objectName+" fingById(Map<String, Object> map);");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	List<"+objectName+"> datalistPage(Map<String, Object> map);");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	List<"+objectName+"> listAll(Map<String, Object> map);");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	Integer count(Map<String, Object> map);");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	void deleteAll(String[] item);");
+		bw.newLine();
+		bw.write("}");
+		bw.flush();
+		bw.close();
+	}
+	
+	//生成MapperXml
+	private static void newXml(String xmlPath,String objectName,String lowerCase,
+							Map<String, Object> map,String mysqlName) throws IOException{
+		File file = new File(xmlPath+"/"+objectName+"Mapper.xml");
+		if(file.exists())return;
+		//不存在就创建并且写入内容
+		file.createNewFile();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		bw.newLine();
+		bw.write("<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">");
+		bw.newLine();
+		bw.newLine();
+		bw.write("<mapper namespace=\"com.example.Hello.dao."+objectName+"Mapper\">");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	<resultMap id=\"BaseResultMap\" type=\"com.example.Hello.entity."+objectName+"\" >");
+		bw.newLine();
+		bw.write("        <id column=\""+lowerCase+"_id\" property=\""+lowerCase+"_id\" jdbcType=\"BIGINT\" />");
+		bw.newLine();
+		Iterator<Entry<String, Object>> iterator = map.entrySet().iterator();
+		String columns="";
+		while(iterator.hasNext()){
+			Map<String, String> mapp=new HashMap<String, String>();
+			mapp.put("String", "VARCHAR");
+			mapp.put("Integer", "INTEGER");
+			Entry<String, Object> next = iterator.next();
+			String key = next.getKey();
+			String value = (String) next.getValue();
+			bw.write("        <result column=\""+key+"\" property=\""+key+"\" jdbcType=\""+mapp.get(value)+"\" />");
+			bw.newLine();
+			columns+=", "+key; 
 		}
-        return bomList;
-    }
-    
-    @GetMapping("/count")
-    @ResponseBody
-    public Object getCount(){
-        //要测试的方法
-        Map<String, Object> map = new HashMap<String, Object>();
-        return bomDOMapper.count(map);
-    }   
+		bw.write("    </resultMap>");
+		bw.newLine();
+		bw.newLine();
+		bw.write("    <sql id=\"Base_Column_List\" >");
+		bw.newLine();
+		bw.write("        "+lowerCase+"_id"+columns);
+		bw.newLine();
+		bw.write("    </sql>");
+		bw.newLine();
+		bw.newLine();
+		bw.write("   	<!-- 新增  -->");
+		bw.newLine();
+		bw.write("    <insert id=\"save\" parameterType=\"com.example.Hello.entity."+objectName+"\" >");
+		bw.newLine();
+		bw.write("        insert into "+mysqlName+"(");
+		bw.newLine();
+		Iterator<Entry<String, Object>> iterator2 = map.entrySet().iterator();
+		while(iterator2.hasNext()){
+			Entry<String, Object> next = iterator2.next();
+			if(iterator2.hasNext()){
+				bw.write("			"+next.getKey()+",");
+				bw.newLine();
+			}else{
+				bw.write("			"+next.getKey()+"");
+				bw.newLine();
+			}
+		}
+		bw.write("        ) values(");
+		bw.newLine();
+		Iterator<Entry<String, Object>> iterator3 = map.entrySet().iterator();
+		while(iterator3.hasNext()){
+			Entry<String, Object> next = iterator3.next();
+			if(iterator2.hasNext()){
+				bw.write("        	#{"+next.getKey()+"},");
+				bw.newLine();
+			}else{
+				bw.write("        	#{"+next.getKey()+"}");
+				bw.newLine();
+			}
+		}
+		bw.write("        )");
+		bw.newLine();
+		bw.write("    </insert>");
+		bw.newLine();
+		bw.newLine();
+		bw.write("    <!-- 删除  -->");
+		bw.newLine();
+		bw.write("    <delete id=\"delete\" parameterType=\"java.lang.Long\" >");
+		bw.newLine();
+		bw.write("        delete from "+mysqlName+"");
+		bw.newLine();
+		bw.write("       	where");
+		bw.newLine();
+		bw.write("       		 "+lowerCase+"_id =#{"+lowerCase+"_id}");
+		bw.newLine();
+		bw.write("    </delete>");
+		bw.newLine();
+		bw.newLine();
+		bw.write("    <!-- 修改  -->");
+		bw.newLine();
+		bw.write("    <update id=\"edit\" parameterType=\"com.example.Hello.entity."+objectName+"\" >");
+		bw.newLine();
+		bw.write("        update "+mysqlName+"");
+		bw.newLine();
+		bw.write("        set");
+		bw.newLine();
+		Iterator<Entry<String, Object>> iterator4 = map.entrySet().iterator();
+		while(iterator4.hasNext()){
+			Entry<String, Object> next = iterator4.next();
+			bw.write("       	<if test=\""+next.getKey()+" != null and "+next.getKey()+" != ''\">");
+			bw.newLine();
+			bw.write("       		"+next.getKey()+" = #{"+next.getKey()+"},");
+			bw.newLine();
+			bw.write("       	</if>");
+			bw.newLine();
+		}
+		bw.write("        where");
+		bw.newLine();
+		bw.write("       		"+lowerCase+"_id = #{"+lowerCase+"_id}");
+		bw.newLine();
+		bw.write("    </update>");
+		bw.newLine();
+		bw.newLine();
+		bw.write("    <!-- 通过id获取数据 -->");
+		bw.newLine();
+		bw.write("	<select id=\"fingById\" parameterType=\"java.util.Map\" resultMap=\"BaseResultMap\">");
+		bw.newLine();
+		bw.write("		select");
+		bw.newLine();
+		bw.write("       		<include refid=\"Base_Column_List\" />");
+		bw.newLine();
+		bw.write("		from");
+		bw.newLine();
+		bw.write("			"+mysqlName+"");
+		bw.newLine();
+		bw.write("		<where>");
+		bw.newLine();
+		bw.write("			<if test=\""+lowerCase+"_id != null and "+lowerCase+"_id != ''\">");
+		bw.newLine();
+		bw.write("				"+lowerCase+"_id = #{"+lowerCase+"_id}");
+		bw.newLine();
+		bw.write("			</if>");
+		bw.newLine();
+		bw.write("		</where>");
+		bw.newLine();
+		bw.write("	</select>");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	<!-- 列表 -->");
+		bw.newLine();
+		bw.write("	<select id=\"datalistPage\" parameterType=\"java.util.Map\" resultMap=\"BaseResultMap\">");
+		bw.newLine();
+		bw.write("		select");
+		bw.newLine();
+		bw.write("       		<include refid=\"Base_Column_List\" />");
+		bw.newLine();
+		bw.write("		from");
+		bw.newLine();
+		bw.write("			"+mysqlName+"");
+		bw.newLine();
+		bw.write("		<where>");
+		bw.newLine();
+		Iterator<Entry<String, Object>> iterator5 = map.entrySet().iterator();
+		int num=0;
+		while(iterator5.hasNext()){
+			Entry<String, Object> next = iterator5.next();
+			String key = next.getKey();
+			if(num==0){
+				bw.write("			<if test=\""+key+" != null and "+key+" != ''\">");
+				bw.newLine();
+				bw.write("				"+key+" = #{"+key+"}");
+				bw.newLine();
+				bw.write("			</if>");
+				bw.newLine();
+			}else{
+				bw.write("			<if test=\""+key+" != null and "+key+" != ''\">");
+				bw.newLine();
+				bw.write("				and "+key+" = #{"+key+"}");
+				bw.newLine();
+				bw.write("			</if>");
+				bw.newLine();
+			}
+			num++;
+		}
+		bw.write("		</where>");
+		bw.newLine();
+		bw.write("	</select>");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	<!-- 列表(全部) -->");
+		bw.newLine();
+		bw.write("	<select id=\"listAll\" parameterType=\"java.util.Map\" resultMap=\"BaseResultMap\">");
+		bw.newLine();
+		bw.write("		select");
+		bw.newLine();
+		bw.write("       		<include refid=\"Base_Column_List\" />");
+		bw.newLine();
+		bw.write("		from");
+		bw.newLine();
+		bw.write("			"+mysqlName+"");
+		bw.newLine();
+		bw.write("		<where>");
+		bw.newLine();
+		Iterator<Entry<String, Object>> iterator6 = map.entrySet().iterator();
+		num=0;
+		while(iterator6.hasNext()){
+			Entry<String, Object> next = iterator6.next();
+			String key = next.getKey();
+			if(num==0){
+				bw.write("			<if test=\""+key+" != null and "+key+" != ''\">");
+				bw.newLine();
+				bw.write("				"+key+" = #{"+key+"}");
+				bw.newLine();
+				bw.write("			</if>");
+				bw.newLine();
+			}else{
+				bw.write("			<if test=\""+key+" != null and "+key+" != ''\">");
+				bw.newLine();
+				bw.write("				and "+key+" = #{"+key+"}");
+				bw.newLine();
+				bw.write("			</if>");
+				bw.newLine();
+			}
+			num++;
+		}
+		bw.write("		</where>");
+		bw.newLine();
+		bw.write("	</select>");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	<!-- 统计 -->");
+		bw.newLine();
+		bw.write("	<select id=\"count\" parameterType=\"java.util.Map\" resultType=\"java.lang.Integer\">");
+		bw.newLine();
+		bw.write("		select");
+		bw.newLine();
+		bw.write("			count("+lowerCase+"_id)");
+		bw.newLine();
+		bw.write("		from");
+		bw.newLine();
+		bw.write("			"+mysqlName+"");
+		bw.newLine();
+		bw.write("		<where>");
+		bw.newLine();
+		Iterator<Entry<String, Object>> iterator7 = map.entrySet().iterator();
+		num=0;
+		while(iterator7.hasNext()){
+			Entry<String, Object> next = iterator7.next();
+			String key = next.getKey();
+			if(num==0){
+				bw.write("			<if test=\""+key+" != null and "+key+" != ''\">");
+				bw.newLine();
+				bw.write("				"+key+" = #{"+key+"}");
+				bw.newLine();
+				bw.write("			</if>");
+				bw.newLine();
+			}else{
+				bw.write("			<if test=\""+key+" != null and "+key+" != ''\">");
+				bw.newLine();
+				bw.write("				and "+key+" = #{"+key+"}");
+				bw.newLine();
+				bw.write("			</if>");
+				bw.newLine();
+			}
+			num++;
+		}
+		bw.write("		</where>");
+		bw.newLine();
+		bw.write("	</select>");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	<!-- 批量删除 -->");
+		bw.newLine();
+		bw.write("	<delete id=\"deleteAll\">");
+		bw.newLine();
+		bw.write("		delete from "+mysqlName+"");
+		bw.newLine();
+		bw.write("		where");
+		bw.newLine();
+		bw.write("			"+lowerCase+"_id in");
+		bw.newLine();
+		bw.write("		<foreach item=\"item\" index=\"index\" collection=\"array\" open=\"(\" separator=\",\" close=\")\">");
+		bw.newLine();
+		bw.write("                 #{item}");
+		bw.newLine();
+		bw.write("		</foreach>");
+		bw.newLine();
+		bw.write("	</delete>");
+		bw.newLine();
+		bw.newLine();
+		bw.write("</mapper>");
+		bw.flush();
+		bw.close();
+	}
+	
+	//生成实体类
+	private static void newEntity(String entityPath,String objectName,String name,
+							Map<String, Object> map,String lowerCase) throws IOException{
+		File file = new File(entityPath+"/"+objectName+".java");
+		if(file.exists())return;
+		//不存在就创建并且写入内容
+		System.out.println("看一看："+entityPath+"/"+objectName+".java");
+		file.createNewFile();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+		bw.write("package com.example.Hello.entity;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("/**");
+		bw.newLine();
+		bw.write(" * "+name+"实体类");
+		bw.newLine();
+		bw.write(" * @author YQ13512");
+		bw.newLine();
+		bw.write(" *");
+		bw.newLine();
+		bw.write(" */");
+		bw.newLine();
+		bw.write("public class "+objectName+" {");
+		bw.newLine();
+		bw.newLine();
+		bw.write("	private Long "+lowerCase+"_id;");
+		bw.newLine();
+		Iterator<Entry<String, Object>> iterator = map.entrySet().iterator();
+		while(iterator.hasNext()){
+			Entry<String, Object> next = iterator.next();
+			String key = next.getKey();
+			String value = (String) next.getValue();
+			bw.write("	private "+value+" "+key+";");
+			bw.newLine();
+		}
+		bw.newLine();
+		Iterator<Entry<String, Object>> iterator2 = map.entrySet().iterator();
+		bw.write("	public Long get"+objectName+"_id() {");
+		bw.newLine();
+		bw.write("		return "+lowerCase+"_id;");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		bw.write("	public void set"+objectName+"_id(Long "+lowerCase+"_id) {");
+		bw.newLine();
+		bw.write("		this."+lowerCase+"_id = "+lowerCase+"_id;");
+		bw.newLine();
+		bw.write("	}");
+		bw.newLine();
+		while(iterator2.hasNext()){
+			Entry<String, Object> next = iterator2.next();
+			String key = next.getKey();
+			String value = (String) next.getValue();
+			String bigKey=key.substring(0, 1).toUpperCase()+key.substring(1);
+			bw.write("	public "+value+" get"+key+"() {");
+			bw.newLine();
+			bw.write("		return "+key+";");
+			bw.newLine();
+			bw.write("	}");
+			bw.newLine();
+			bw.write("	public void set"+bigKey+"("+value+" "+key+") {");
+			bw.newLine();
+			bw.write("		this."+key+" = "+key+";");
+			bw.newLine();
+			bw.write("	}");
+			bw.newLine();
+		}
+		bw.newLine();
+		bw.newLine();
+		bw.write("}");
+		bw.flush();
+		bw.close();
+	}
+	
+	private static void generatorDirectory(String controllerPath,String lowerCase){
+		File file = new File(controllerPath+"/"+lowerCase);
+		file.mkdirs();
+	}
+	
 }

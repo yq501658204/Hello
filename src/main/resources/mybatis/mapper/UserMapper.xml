@@ -15,74 +15,150 @@
     <sql id="Base_Column_List" >
         user_id, username, password, name, salt,state
     </sql>
-
-    <select id="getAll" resultMap="BaseResultMap"  >
-       SELECT 
-       <include refid="Base_Column_List" />
-	   FROM user
-    </select>
-
-    <select id="getOne" parameterType="java.util.Map" resultMap="BaseResultMap" >
-        SELECT 
-        <include refid="Base_Column_List" />
-	    FROM user
-	    <where>
-	   		<if test="user_id != null and user_id != ''">
-	   			user_id = #{user_id}
-	   		</if>
-	   		<if test="username != null and username != ''">
-	   			and username = #{username}
-	   		</if>
-	   		<if test="name != null and name != ''">
-	   			and name = #{name}
-	   		</if>
-	    </where>
-    </select>
     
-    <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
-    	SELECT
-    		count(user_id)
-    	FROM
-    		user
-    	<where>
-    		<if test="name != null and name != ''">
-    			name = #{name}
-    		</if>
-    		<if test="salt != null and salt != ''">
-    			and salt = #{salt}
-    		</if>
-    		<if test="state != null and state != ''">
-    			and state = #{state}
-    		</if>
-    	</where>
-    </select>
-
+   	<!-- 新增  -->
     <insert id="save" parameterType="com.example.Hello.entity.User" >
-       INSERT INTO 
-       		user
-       		(username,password,name,salt,state) 
-       	VALUES
-       		(#{username}, #{password}, #{name},#{salt},#{state})
+        insert into user(
+			username,
+			password,
+			name,
+			salt,
+			state       
+        ) values(
+        	#{username},
+        	#{password},
+        	#{name},
+        	#{salt},
+        	#{state}
+        )
     </insert>
     
-    <update id="update" parameterType="com.example.Hello.entity.User" >
-       UPDATE 
-       		user 
-       SET 
-       	<if test="username != null">username = #{username},</if>
-       	<if test="password != null">password = #{password},</if>
-       	<if test="name != null">name = #{name},</if>
-       	<if test="salt != null">salt = #{salt},</if>
-       	<if test="state != null">state = #{state}</if>
-       WHERE 
+    <!-- 删除  -->
+    <delete id="delete" parameterType="java.lang.Long" >
+        delete from user
+       	where 
+       		 user_id =#{user_id}
+    </delete>
+    
+    <!-- 修改  -->
+    <update id="edit" parameterType="com.example.Hello.entity.User" >
+        update user 
+        set
+       	<if test="username != null and username != ''">
+       		username = #{username},
+       	</if>
+       	<if test="password != null and password != ''">
+       		password = #{password},
+       	</if>
+       	<if test="name != null and name != ''">
+       		name = #{name},
+       	</if>
+       	<if test="salt != null and salt != ''">
+       		salt = #{salt},
+       	</if>
+       	<if test="state != null and state != ''">
+       		state = #{state}
+       	</if>
+        where 
        		user_id = #{user_id}
     </update>
     
-    <delete id="delete" parameterType="java.lang.Long" >
-       DELETE FROM
-       		 user 
-       WHERE 
-       		 user_id =#{user_id}
-    </delete>
-
+    <!-- 通过id获取数据 -->
+	<select id="fingById" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select
+       		<include refid="Base_Column_List" />
+		from
+			user
+		<where>
+			<if test="user_id != null and user_id != ''">
+				user_id = #{user_id}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select
+       		<include refid="Base_Column_List" />
+		from
+			user
+		<where>
+			<if test="username != null and username != ''">
+				username = #{username}
+			</if>
+			<if test="password != null and password != ''">
+				and password = #{password}
+			</if>
+			<if test="name != null and name != ''">
+				and name = #{name}
+			</if>
+			<if test="salt != null and salt != ''">
+				and salt = #{salt}
+			</if>
+			<if test="state != null and state != ''">
+				and state = #{state}
+			</if>
+		</where>				
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select
+       		<include refid="Base_Column_List" />
+		from
+			user
+		<where>
+			<if test="username != null and username != ''">
+				username = #{username}
+			</if>
+			<if test="password != null and password != ''">
+				and password = #{password}
+			</if>
+			<if test="name != null and name != ''">
+				and name = #{name}
+			</if>
+			<if test="salt != null and salt != ''">
+				and salt = #{salt}
+			</if>
+			<if test="state != null and state != ''">
+				and state = #{state}
+			</if>
+		</where>		
+	</select>
+	
+	<!-- 统计 -->
+	<select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select
+			count(user_id)
+		from 
+			user
+		<where>
+			<if test="username != null and username != ''">
+				username = #{username}
+			</if>
+			<if test="password != null and password != ''">
+				and password = #{password}
+			</if>
+			<if test="name != null and name != ''">
+				and name = #{name}
+			</if>
+			<if test="salt != null and salt != ''">
+				and salt = #{salt}
+			</if>
+			<if test="state != null and state != ''">
+				and state = #{state}
+			</if>
+		</where>	
+	</select>
+		
+	<!-- 批量删除 -->
+	<delete id="deleteAll">
+		delete from user
+		where 
+			user_id in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
 </mapper>

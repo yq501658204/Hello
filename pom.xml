@@ -76,10 +76,10 @@
 		</dependency>
 		<!-- mybatis的分页插件 -->
         <dependency>
-     		<groupId>com.github.pagehelper</groupId>      
-     		<artifactId>pagehelper</artifactId>
-      		<version>4.1.6</version>
- 		</dependency>
+      		<groupId>com.github.pagehelper</groupId>
+      		<artifactId>pagehelper-spring-boot-starter</artifactId>
+      		<version>1.2.5</version>
+    	</dependency>
 		<!-- 热启动支持包 -->
 	    <dependency>
     	    <groupId>org.springframework.boot</groupId>
@@ -104,6 +104,7 @@
     		<version>2.4</version>
     		<classifier>jdk15</classifier>
 		</dependency>
+		
 	</dependencies>
 
 	<build>

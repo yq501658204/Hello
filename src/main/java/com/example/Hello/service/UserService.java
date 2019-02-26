@@ -13,16 +13,20 @@ import com.example.Hello.util.PageBean;
  */
 public interface UserService {
 	
-	List<User> getAll();
-
-	PageBean<User> getByPage(Integer currentPage,Integer pageSize);
-	
-	User getOne(Map<String,Object> map);
-	
 	void save(User user);
 	
-	void update(User user);
-	
 	void delete(Long user_id);
+	
+	void edit(User user);
+	
+	User fingById(Map<String, Object> map);
+	
+	PageBean<User> datalistPage(Map<String, Object> map,Integer currentPage,Integer pageSize);
+	
+	List<User> listAll(Map<String, Object> map);
+	
+	Integer count(Map<String, Object> map);
+	
+	void deleteAll(String[] item);
 	
 }

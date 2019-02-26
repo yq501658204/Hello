@@ -15,16 +15,19 @@ import com.example.Hello.entity.User;
 @Mapper
 public interface UserMapper {
 	
-	List<User> getAll();
-	
-	User getOne(Map<String,Object> map);
-	
 	void save(User user);
-	
-	void update(User user);
 	
 	void delete(Long user_id);
 	
-	@SuppressWarnings("rawtypes")
-	Integer count(Map map);
+	void edit(User user);
+	
+	User fingById(Map<String, Object> map);
+	
+	List<User> datalistPage(Map<String, Object> map);
+	
+	List<User> listAll(Map<String, Object> map);
+	
+	Integer count(Map<String, Object> map);
+	
+	void deleteAll(String[] item);
 }
